@@ -1,339 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TikTok Viewer Pro</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap');
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;overflow:hidden}
-    :root{
-      --bg:#06060c;--card:#0d0d16;--border:#181826;
-      --pink:#fe2c55;--cyan:#25f4ee;--text:#eeeef5;--muted:#3a3a52;
-    }
-    body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;display:flex;flex-direction:column}
-
-    /* TOP BAR */
-    .topbar{
-      display:flex;align-items:center;gap:10px;
-      padding:7px 14px;border-bottom:1px solid var(--border);
-      background:#07070d;flex-shrink:0;
-    }
-    .logo{font-size:.85rem;font-weight:700;background:linear-gradient(135deg,#fff 20%,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap}
-    .input-wrap{display:flex;gap:6px;flex:1}
-    .input-wrap input{
-      flex:1;background:#10101a;border:1px solid var(--border);
-      color:var(--text);font-family:inherit;font-size:.78rem;
-      padding:6px 10px;border-radius:6px;outline:none;transition:border-color .15s;min-width:0
-    }
-    .input-wrap input:focus{border-color:var(--cyan)}
-    .input-wrap input::placeholder{color:var(--muted)}
-
-    .tbtn{
-      border:none;padding:6px 12px;border-radius:6px;
-      font-family:inherit;font-size:.75rem;font-weight:700;
-      cursor:pointer;white-space:nowrap;transition:opacity .15s,transform .1s;flex-shrink:0
-    }
-    .tbtn:active{transform:scale(.96)}
-    .tbtn.primary{background:linear-gradient(135deg,var(--pink),#900030);color:#fff}
-    .tbtn.mute{background:#1a1a28;border:1px solid var(--border);color:var(--cyan)}
-    .tbtn.mute.muted{background:#25f4ee22;border-color:var(--cyan);color:var(--cyan)}
-    .tbtn:disabled{opacity:.3;cursor:not-allowed}
-
-    .sep{width:1px;height:20px;background:var(--border);flex-shrink:0}
-
-    #err{color:var(--pink);font-size:.7rem;white-space:nowrap}
-
-    /* STATS */
-    .statsbar{
-      display:flex;align-items:center;gap:12px;
-      padding:3px 14px;font-size:.65rem;color:var(--muted);
-      border-bottom:1px solid var(--border);background:#06060b;flex-shrink:0
-    }
-    .statsbar b{color:var(--cyan)}
-    .prog-wrap{width:100px;height:2px;background:var(--border);border-radius:2px;overflow:hidden}
-    .prog-bar{height:100%;background:linear-gradient(90deg,var(--pink),var(--cyan));width:0%;transition:width .15s}
-
-    /* GRID — fills remaining height, no scroll */
-    .grid-wrap{flex:1;overflow:hidden;padding:5px}
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(10,1fr);
-      grid-template-rows:repeat(5,1fr);
-      gap:3px;
-      width:100%;
-      height:100%;
-    }
-
-    /* CARD */
-    .card{
-      background:var(--card);border:1px solid var(--border);
-      border-radius:5px;overflow:hidden;position:relative;
-      cursor:pointer;transition:border-color .15s;
-    }
-    .card:hover{border-color:var(--pink)}
-    .card.playing{border-color:var(--cyan)}
-
-    /* play/pause overlay */
-    .overlay{
-      position:absolute;top:0;left:0;width:100%;height:100%;
-      display:flex;align-items:center;justify-content:center;
-      z-index:3;pointer-events:none;opacity:0;transition:opacity .2s;
-      background:rgba(0,0,0,.35);
-    }
-    .card:hover .overlay{opacity:1}
-    .overlay svg{width:18px;height:18px;fill:rgba(255,255,255,.9)}
-
-    /* number badge */
-    .badge{
-      position:absolute;top:3px;left:3px;
-      font-size:.48rem;font-weight:700;color:rgba(255,255,255,.5);
-      z-index:4;pointer-events:none;line-height:1;
-      text-shadow:0 0 4px #000;
-    }
-
-    /* mute indicator */
-    .mute-ind{
-      position:absolute;top:3px;right:3px;
-      font-size:.5rem;z-index:4;pointer-events:none;
-      opacity:0;transition:opacity .2s;
-    }
-    .muted-all .mute-ind{opacity:1}
-
-    /* iframe fills card */
-    .vbox{position:absolute;top:0;left:0;width:100%;height:100%}
-    .vbox iframe{width:100%;height:100%;border:none;display:block}
-
-    /* placeholder */
-    .ph{
-      position:absolute;top:0;left:0;width:100%;height:100%;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-    }
-    .ph svg{width:12px;height:12px;opacity:.15}
-    .ph span{font-size:.5rem;color:var(--muted)}
-    .spin-sm{width:10px;height:10px;border:1.5px solid var(--border);border-top-color:var(--pink);border-radius:50%;animation:rot .5s linear infinite}
-    @keyframes rot{to{transform:rotate(360deg)}}
-  </style>
+<meta charset="UTF-8">
+<title>Website Load Tester</title>
+<style>
+body{
+    font-family:Arial;
+    max-width:600px;
+    margin:40px auto;
+}
+input,button{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+}
+#log{
+    background:#111;
+    color:#0f0;
+    padding:10px;
+    height:250px;
+    overflow:auto;
+}
+</style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="logo">🎵 TikTok×50</div>
-  <div class="input-wrap">
-    <input id="url-input" type="text" placeholder="TikTok লিংক paste করুন — vt.tiktok.com বা full link..."/>
-    <button class="tbtn primary" id="load-btn" onclick="loadAll()">▶ লোড</button>
-  </div>
-  <div class="sep"></div>
-  <button class="tbtn mute" id="mute-btn" onclick="toggleMuteAll()" title="সব ভিডিও Mute/Unmute">🔇 All Mute</button>
-  <button class="tbtn mute" id="pause-btn" onclick="togglePauseAll()" title="সব Play/Pause">⏸ All Pause</button>
-  <div class="sep"></div>
-  <div id="err"></div>
-</div>
+<h2>Website Load Tester</h2>
 
-<div class="statsbar">
-  <span>বক্স: <b>50</b></span>
-  <span>লোড: <b id="lc">0</b>/50</span>
-  <div class="prog-wrap"><div class="prog-bar" id="prog"></div></div>
-  <span id="smsg">লিংক দিন, Enter চাপুন</span>
-</div>
+<input type="text" id="url" placeholder="https://example.com">
 
-<div class="grid-wrap">
-  <div class="grid" id="grid"></div>
-</div>
+<input type="number" id="rps" value="20">
+
+<button onclick="start()">Start</button>
+<button onclick="stop()">Stop</button>
+
+<div id="log"></div>
 
 <script>
-const TOTAL = 50;
-const BATCH = 10;
-const DELAY = 30; // ms — very fast batch
+let timer;
 
-let loaded = 0;
-let currentId = null;
-let isMuted = false;
-let isPaused = false;
-let iframes = [];
-
-// ── Resolve video ID from any TikTok URL ──
-async function resolveId(url) {
-  // Fast path: ID already in URL
-  const m = url.match(/\/video\/(\d+)/);
-  if (m) return m[1];
-
-  // oEmbed API (works for short links)
-  const tryOembed = async (fetchUrl) => {
-    const r = await fetch(fetchUrl, {signal: AbortSignal.timeout(5000)});
-    if (!r.ok) return null;
-    const d = await r.json();
-    if (d.embed_product_id) return d.embed_product_id;
-    const hm = (d.html || '').match(/video\/(\d+)/);
-    return hm ? hm[1] : null;
-  };
-
-  try {
-    const id = await tryOembed('https://www.tiktok.com/oembed?url=' + encodeURIComponent(url));
-    if (id) return id;
-  } catch(e){}
-
-  try {
-    const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.tiktok.com/oembed?url=' + encodeURIComponent(url));
-    const r = await fetch(proxy, {signal: AbortSignal.timeout(7000)});
-    if (r.ok) {
-      const j = await r.json();
-      const d = JSON.parse(j.contents);
-      if (d.embed_product_id) return d.embed_product_id;
-      const hm = (d.html || '').match(/video\/(\d+)/);
-      if (hm) return hm[1];
-    }
-  } catch(e){}
-
-  return null;
+function log(text){
+    document.getElementById("log").innerHTML += text+"<br>";
 }
 
-// ── Build placeholder grid ──
-function buildPlaceholders(state) {
-  const g = document.getElementById('grid');
-  g.innerHTML = '';
-  iframes = [];
-  for (let i = 0; i < TOTAL; i++) {
-    const c = document.createElement('div');
-    c.className = 'card';
-    c.id = 'card' + i;
-    c.innerHTML = `
-      <div class="badge">${i+1}</div>
-      <div class="mute-ind">🔇</div>
-      <div class="overlay">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </div>
-      <div class="ph" id="ph${i}">
-        ${state === 'spin' ? '<div class="spin-sm"></div>' :
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/></svg><span>লিংক দিন</span>'}
-      </div>`;
-    g.appendChild(c);
-  }
+function start(){
+
+    stop();
+
+    const url=document.getElementById("url").value;
+    const rps=parseInt(document.getElementById("rps").value);
+
+    timer=setInterval(()=>{
+
+        for(let i=0;i<rps;i++){
+
+            fetch(url+"?t="+Date.now()+Math.random(),{
+                cache:"no-store",
+                mode:"no-cors"
+            }).then(()=>{
+                log("✔ Request Sent");
+            }).catch(()=>{
+                log("✖ Failed");
+            });
+
+        }
+
+    },1000);
+
 }
 
-// ── Inject iframe into card ──
-function injectCard(i, id) {
-  const card = document.getElementById('card' + i);
-  const ph   = document.getElementById('ph' + i);
-  if (!card) return;
-
-  // Remove placeholder
-  if (ph) ph.remove();
-
-  const wrap = document.createElement('div');
-  wrap.className = 'vbox';
-
-  const iframe = document.createElement('iframe');
-  // autoplay=1, mute=0 by default (user controls mute via button)
-  iframe.src = `https://www.tiktok.com/embed/v2/${id}?autoplay=1&muted=${isMuted?1:0}&lang=en`;
-  iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
-  iframe.allowFullscreen = true;
-  // no loading=lazy — instant load
-  iframe.setAttribute('scrolling','no');
-  wrap.appendChild(iframe);
-  card.appendChild(wrap);
-  iframes.push(iframe);
-
-  // Click to open in new tab (TikTok doesn't allow JS control of iframe content)
-  card.addEventListener('click', () => {
-    window.open(`https://www.tiktok.com/embed/v2/${id}`, '_blank');
-  });
-
-  loaded++;
-  document.getElementById('lc').textContent = loaded;
-  document.getElementById('prog').style.width = (loaded / TOTAL * 100) + '%';
-  if (loaded === TOTAL) {
-    document.getElementById('smsg').innerHTML = '<b style="color:var(--cyan)">✔ সব লোড হয়েছে!</b>';
-  }
+function stop(){
+    clearInterval(timer);
 }
-
-// ── Fast batch injection ──
-function startBatchLoad(id) {
-  let i = 0;
-  function batch() {
-    const end = Math.min(i + BATCH, TOTAL);
-    for (; i < end; i++) injectCard(i, id);
-    if (i < TOTAL) setTimeout(batch, DELAY);
-  }
-  batch();
-}
-
-// ── Mute all — reload iframes with muted param ──
-function toggleMuteAll() {
-  isMuted = !isMuted;
-  const btn = document.getElementById('mute-btn');
-  btn.textContent = isMuted ? '🔊 Unmute' : '🔇 All Mute';
-  btn.classList.toggle('muted', isMuted);
-  document.getElementById('grid').classList.toggle('muted-all', isMuted);
-
-  if (!currentId) return;
-  // Reload all iframes with new mute state
-  iframes.forEach(f => {
-    const base = `https://www.tiktok.com/embed/v2/${currentId}?autoplay=1&muted=${isMuted?1:0}&lang=en`;
-    f.src = base;
-  });
-}
-
-// ── Pause all — reload iframes without autoplay ──
-function togglePauseAll() {
-  isPaused = !isPaused;
-  const btn = document.getElementById('pause-btn');
-  btn.textContent = isPaused ? '▶ All Play' : '⏸ All Pause';
-  btn.classList.toggle('muted', isPaused);
-
-  if (!currentId) return;
-  iframes.forEach(f => {
-    const play = isPaused ? 0 : 1;
-    f.src = `https://www.tiktok.com/embed/v2/${currentId}?autoplay=${play}&muted=${isMuted?1:0}&lang=en`;
-  });
-}
-
-// ── Main load ──
-async function loadAll() {
-  const input = document.getElementById('url-input');
-  const err   = document.getElementById('err');
-  const btn   = document.getElementById('load-btn');
-
-  err.textContent = '';
-  const raw = input.value.trim();
-  if (!raw) { err.textContent = '⚠️ লিংক দিন'; return; }
-  if (!raw.includes('tiktok.com')) { err.textContent = '⚠️ TikTok লিংক দিন'; return; }
-
-  btn.disabled = true;
-  btn.textContent = '⏳';
-  loaded = 0;
-  iframes = [];
-  document.getElementById('lc').textContent = '0';
-  document.getElementById('prog').style.width = '0%';
-  document.getElementById('smsg').textContent = 'ID বের করছি...';
-  buildPlaceholders('spin');
-
-  const id = await resolveId(raw);
-
-  btn.disabled = false;
-  btn.textContent = '▶ লোড';
-
-  if (!id) {
-    err.textContent = '⚠️ ID পাওয়া যায়নি। পুরো TikTok লিংক দিন।';
-    buildPlaceholders('empty');
-    document.getElementById('smsg').textContent = 'লিংক দিন';
-    return;
-  }
-
-  currentId = id;
-  isPaused = false;
-  document.getElementById('pause-btn').textContent = '⏸ All Pause';
-  document.getElementById('smsg').textContent = 'লোড হচ্ছে...';
-  startBatchLoad(id);
-}
-
-// Enter key
-document.getElementById('url-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') loadAll();
-});
-
-buildPlaceholders('empty');
 </script>
+
 </body>
 </html>
